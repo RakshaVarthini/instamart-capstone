@@ -1,0 +1,21 @@
+ok: raw order rows 13084
+ok: 119 exact duplicates
+ok: 656 pending rows
+ok: 12309 distinct order_id
+ok: 120 non-numeric amounts
+ok: 106 negative delivery
+ok: 2541 blank delivery
+ok: 61 blank ages
+ok: 24 raw city spellings
+ok: 6 clean cities
+ok: genders 610/560/30
+ok: ages 18-60, none missing
+ok: 12309 clean orders unique
+ok: 11110 completed / 1199 cancelled
+ok: no pending
+ok: no missing amount
+ok: no missing delivery (completed), 1199 missing (cancelled)
+ok: completed revenue 2998668.80
+ok: db has 3 tables
+ok: db orders == csv orders
+ALL CHECKPOINTS PASSED

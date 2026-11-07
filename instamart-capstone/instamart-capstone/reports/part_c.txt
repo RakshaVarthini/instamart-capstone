@@ -1,0 +1,40 @@
+tickets: 164
+empty tickets: 4 | long tickets: 4 | long ticket estimate: 734
+substitutions: {'EMAIL': 55, 'PHONE': 91, 'ORDER_ID': 132} total 278
+PII left after re-applying patterns: 0
+zero-shot prompt est tokens: 24 | few-shot prompt est tokens: 110
+
+--- zero-shot full run ---
+status counts: {'classified_json': 135, 'classified_keyword': 12, 'flagged_invalid_output': 9, 'skipped_empty': 4, 'flagged_long': 4}
+model calls (tickets sent): 156 | TransientLLMErrors: 19 | retry log lines: 19
+classified 147; accuracy 85.7% (126/147); total tokens 8152; tokens per classified ticket 55.5
+retry log (first 3 lines):
+   retry ticket=T0002 retry_number=0 wait=0.0530s reason=503 server busy
+   retry ticket=T0116 retry_number=0 wait=0.0453s reason=503 server busy
+   retry ticket=T0153 retry_number=0 wait=0.0484s reason=503 server busy
+retry waits range 0.0453-0.0562; all retry_number=0: True
+confusion (rows=true, cols=predicted), zero-shot classified tickets:
+category       billing  delivery  fraud  technical
+true_category                                     
+billing             38         0      0          0
+delivery             0        36      0          0
+fraud               11         0     23          0
+technical           10         0      0         29
+
+--- few-shot full run ---
+status counts: {'classified_json': 135, 'classified_keyword': 12, 'flagged_invalid_output': 9, 'skipped_empty': 4, 'flagged_long': 4}
+model calls (tickets sent): 156 | TransientLLMErrors: 19 | retry log lines: 19
+classified 147; accuracy 100.0% (147/147); total tokens 21568; tokens per classified ticket 146.7
+few-shot status counts: {'classified_json': 135, 'classified_keyword': 12, 'flagged_invalid_output': 9, 'skipped_empty': 4, 'flagged_long': 4}
+
+--- zero-shot TOKEN_BUDGET=6000 ---
+status counts: {'classified_json': 101, 'budget_exhausted': 41, 'classified_keyword': 8, 'flagged_invalid_output': 6, 'skipped_empty': 4, 'flagged_long': 4}
+model calls (tickets sent): 115 | TransientLLMErrors: 14 | retry log lines: 14
+classified 109; accuracy 85.3% (93/109); total tokens 6012; tokens per classified ticket 55.2
+budget_exhausted tickets: 41
+
+final rows: 164 | status: {'classified_json': 135, 'classified_keyword': 12, 'flagged_invalid_output': 9, 'skipped_empty': 4, 'flagged_long': 4}
+routes: {'support_queue': 102, 'security_team': 34, 'human_review': 17, 'premium_desk': 11}
+priority: {'NORMAL': 119, 'HIGH': 45}
+tickets with a customer missing from segment file: 0
+rule-validated (json/keyword): 147 | to humans: 17

@@ -1,0 +1,85 @@
+=== RFM ===
+customers: 1175
+recency median/min/max: 19.0 0 180
+frequency mean/max: 9.46 33
+monetary mean/max: 2552.06 14766.55
+
+=== K-means K=2..8 ===
+K=2: inertia 1820.8 silhouette 0.465
+K=3: inertia 1268.2 silhouette 0.445
+K=4: inertia 743.1 silhouette 0.526
+K=5: inertia 617.4 silhouette 0.480
+K=6: inertia 503.2 silhouette 0.482
+K=7: inertia 408.5 silhouette 0.416
+K=8: inertia 366.5 silhouette 0.412
+
+=== Segment profile (K=4) ===
+            size  recency  frequency  monetary
+segment_id                                    
+0            436    28.86       3.77   1057.62
+1            138    24.12       6.77   7129.70
+2            419     8.77      19.40   3410.02
+3            182   109.04       2.20    685.99
+            size  recency  frequency  monetary                  name
+segment_id                                                          
+0            436    28.86       3.77   1057.62   Occasional Shoppers
+1            138    24.12       6.77   7129.70  Premium Big Spenders
+2            419     8.77      19.40   3410.02        Loyal Regulars
+3            182   109.04       2.20    685.99         Slipping Away
+PCA explained_variance_ratio_: [0.634 0.218] total 0.852
+
+=== Lapse cohort ===
+cohort 1156; lapsed 443 (38.32%); train 924 test 232
+baseline accuracy 0.616 lapsed-F1 0.000
+lapsed in train: 354 not lapsed in train: 570
+
+no missing value in any feature column: True
+scaler mean of frequency (train only): 8.1147 | full-cohort mean: 8.0285
+(they differ because the scaler sees only the 924 training rows, never the test rows)
+encoded feature count: 19
+
+=== Tuning ===
+LR best {'m__C': 100} cv F1 0.6506
+RF best {'m__max_depth': 8, 'm__min_samples_leaf': 10} cv F1 0.6811
+
+=== Test-set evaluation (lapsed = positive class) ===
+LogisticRegression: confusion [[TN FP],[FN TP]] = [[111, 32], [31, 58]] precision 0.644 recall 0.652 F1 0.648
+RandomForest: confusion [[TN FP],[FN TP]] = [[113, 30], [31, 58]] precision 0.659 recall 0.652 F1 0.655
+selected by cross-validated F1 (not by test): RandomForest
+
+=== Oversampling (train only) ===
+balanced counts: {1: 570, 0: 570}
+-- un-balanced LR vs balanced LR on the original test set
+LR un-balanced: confusion [[TN FP],[FN TP]] = [[111, 32], [31, 58]] precision 0.644 recall 0.652 F1 0.648
+LR balanced   : confusion [[TN FP],[FN TP]] = [[90, 53], [13, 76]] precision 0.589 recall 0.854 F1 0.697
+
+=== Top 5 RF importances ===
+num__frequency               0.2796
+num__monetary                0.2712
+num__recency_days            0.1152
+num__avg_delivery_minutes    0.0612
+num__cancel_rate             0.0525
+
+=== LR coefficients ===
+num__recency_days 0.0392
+num__frequency -1.6973
+num__monetary 0.2834
+num__tenure_days -0.0503
+num__cancel_rate -0.1238
+
+reloaded model reproduces test predictions exactly: True
+selected model RandomForest: confusion [[TN FP],[FN TP]] = [[113, 30], [31, 58]] precision 0.659 recall 0.652 F1 0.655
+
+Premium customers in test set: 40
+customer_id  lapse_probability  actually_lapsed
+      C0862             0.4872                0
+      C1112             0.4841                0
+      C0060             0.4798                0
+      C0802             0.4798                0
+      C1008             0.4760                0
+      C1000             0.4604                0
+      C0525             0.4579                1
+      C0133             0.4559                0
+      C0267             0.4523                0
+      C0167             0.4522                0
+truly lapsed among list: 1 of 10

@@ -1,0 +1,36 @@
+chunks total: 15 {'delivery_policy.txt': 3, 'escalation_policy.txt': 3, 'payment_policy.txt': 3, 'privacy_policy.txt': 2, 'refund_policy.txt': 4}
+chunks with overlap 0: 13
+top-3 for 'refund policy late delivery': ['refund_policy.txt', 'refund_policy.txt', 'refund_policy.txt']
+
+=== RAG evaluation: chunk 40 / overlap 10 ===
+answerable: expected_doc in top-3 12/12 | answer contains expected_fact 12/12 | unanswerable fallback 2/2
+
+=== RAG evaluation: chunk 40 / overlap 0 ===
+answerable: expected_doc in top-3 12/12 | answer contains expected_fact 10/12 | unanswerable fallback 2/2
+  FAIL: ('What delivery time makes a completed order eligible for a full refund?', 'doc_in_top3=True fact_in_answer=False', 'receives a full refund of the order amount.')
+  FAIL: ('How soon is money returned when a payment fails but is deducted?', 'doc_in_top3=True fact_in_answer=False', 'If a payment fails but money is deducted, the amount is returned automatically\n \n1000 must be approved by a human support lead before money is returned.')
+
+sample answer: ('A refund above INR 1000 must be approved by a human support lead before money is returned.', ['refund_policy.txt', 'refund_policy.txt', 'refund_policy.txt'])
+
+=== Seven scenarios ===
+| scenario | status | refund INR | expected | model calls | tokens |
+| S1 | REFUND | 128.25 | 128.25 | 5 | 1002 |
+| S2 | REFUND | 135.00 | 135.00 | 5 | 1002 |
+| S3 | ESCALATE | 1999.00 | 1999.00 | 5 | 989 |
+| S4 | DENIED | 0.00 | 0.00 | 4 | 689 |
+| S5 | DENIED | 0.00 | 0.00 | 3 | 400 |
+| S6 | NOT_FOUND | 0.00 | 0.00 | 2 | 114 |
+| S7 | FALLBACK_MAX_ITERATIONS | 0.00 | 0.00 | 6 | 3126 |
+
+=== Stop-safely demos ===
+S1 token_limit=200: status=FALLBACK_TOKEN_LIMIT llm_calls=3 tokens=417 steps=2
+   final_answer: HANDOFF to human agent: automated run stopped (token limit 200 exceeded (417)) after 2 tool step(s) and 3 model call(s). Tools run: get_order, search_policy. Last observation: {"results": [{"source": "refund_policy.txt", "score": 
+S1 time_limit_seconds=0: status=FALLBACK_TIMEOUT llm_calls=0 tokens=0 steps=0
+   final_answer: HANDOFF to human agent: automated run stopped (time limit of 0s reached) after 0 tool step(s) and 0 model call(s). Tools run: none. Last observation: none. Customer request: My order ORD-100048 reached me very late. I would like a
+
+=== Crash and resume (S1) ===
+crashed: simulated crash after tool execution #2
+checkpoint: tools_executed = ['get_order', 'search_policy'] | step 2 | tokens_used 144
+resumed: status REFUND | refund 128.25 | llm_calls 5 | tokens 1002
+tools executed across crash + resume, in order: ['get_order', 'search_policy', 'calculate_refund', 'issue_refund']
+ledger lines: 4

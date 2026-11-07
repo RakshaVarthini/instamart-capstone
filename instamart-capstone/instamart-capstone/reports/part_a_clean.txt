@@ -1,0 +1,66 @@
+=== AUDIT: shape, dtypes, missing ===
+
+[customers] shape=(1200, 5)
+               dtype  missing  missing_pct
+customer_id      str        0         0.00
+city             str        0         0.00
+signup_date      str        0         0.00
+age          float64       61         5.08
+gender           str       30         2.50
+
+[products] shape=(40, 4)
+              dtype  missing  missing_pct
+product_id      str        0          0.0
+product_name    str        0          0.0
+category        str        0          0.0
+price_inr     int64        0          0.0
+
+[orders] shape=(13084, 9)
+                    dtype  missing  missing_pct
+order_id              str        0         0.00
+customer_id           str        0         0.00
+product_id            str        0         0.00
+quantity            int64        0         0.00
+order_ts              str        0         0.00
+status                str        0         0.00
+discount_pct        int64        0         0.00
+order_amount          str        0         0.00
+delivery_minutes  float64     2541        19.42
+
+=== AUDIT FIGURES ===
+orders raw rows: 13084
+exact duplicate rows: 119
+pending rows: 656
+distinct order_id: 12309
+non-numeric order_amount: 120
+negative delivery_minutes: 106
+blank delivery_minutes: 2541
+customers blank age: 61
+ages outside 10-100: 6
+distinct raw city spellings: 24
+distinct non-blank gender spellings: 10
+blank gender: 30
+
+=== CLEAN CUSTOMERS ===
+city
+Pune         227
+Delhi        210
+Bengaluru    197
+Chennai      191
+Hyderabad    191
+Mumbai       184
+gender
+female     610
+male       560
+unknown     30
+missing age: 0 age range: 18 60
+
+=== CLEAN ORDERS: rule effects ===
+rows start 13084; after exact-dup removal 12965 (-119); after latest-record-per-order 12309 (-656)
+unparseable amounts imputed from price: 112
+negative delivery set missing: 105; completed missing delivery imputed with category median: 774
+rows 12309 {'completed': 11110, 'cancelled': 1199}
+missing amount 0 missing delivery completed 0 missing delivery cancelled 1199
+completed revenue 2998668.8
+
+stored CSVs and data/instamart.db
